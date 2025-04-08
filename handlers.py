@@ -4,6 +4,8 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
+from speech_to_text import transcribe
+
 router = Router()
 
 class Pronounce(StatesGroup):
@@ -24,9 +26,11 @@ async def cmd_check(message: Message, state: FSMContext):
         return
 
     word = args[1].strip()
+    # нужна проверка корейское ли слово
+
     await state.update_data(expected_word=word)
     await state.set_state(Pronounce.waiting_for_voice)
-    await message.answer(f"checking {word}")
+    await message.answer(f"Теперь отправь голосовое сообщение с произношением слова: {word}")
 
 
 @router.message(Pronounce.waiting_for_voice, F.voice)
@@ -35,7 +39,10 @@ async def handle_voice(message: Message, state: FSMContext):
     expected_word = data.get("expected_word")
 
     voice = message.voice
-    recognized_text = "todo"
+    file = await message.bot.get_file(voice.file_id)
+    file_url = f"https://api.telegram.org/file/bot{message.bot.token}/{file.file_path}"
+
+    recognized_text = await transcribe(file_url)
 
     if recognized_text.lower().strip() == expected_word.lower().strip():
         await message.answer("Произношение совпадает!")
