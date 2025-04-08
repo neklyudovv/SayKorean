@@ -4,6 +4,8 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
+from re import fullmatch
+
 from speech_to_text import transcribe
 
 router = Router()
@@ -26,7 +28,10 @@ async def cmd_check(message: Message, state: FSMContext):
         return
 
     word = args[1].strip()
-    # нужна проверка корейское ли слово
+
+    if not fullmatch(r"[가-힣]+", word):
+        await message.answer("Введенное слово не на корейском")
+        return
 
     await state.update_data(expected_word=word)
     await state.set_state(Pronounce.waiting_for_voice)
