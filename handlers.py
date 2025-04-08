@@ -22,7 +22,7 @@ async def cmd_check(message: Message, state: FSMContext):
     args = message.text.strip().split(maxsplit=1)
 
     if len(args) < 2:
-        await message.answer("no word")
+        await message.answer("Укажи слово. Пример: /check 안녕")
         return
 
     word = args[1].strip()
@@ -30,7 +30,8 @@ async def cmd_check(message: Message, state: FSMContext):
 
     await state.update_data(expected_word=word)
     await state.set_state(Pronounce.waiting_for_voice)
-    await message.answer(f"Теперь отправь голосовое сообщение с произношением слова: {word}")
+
+    await message.answer(f"Проверка слова: {word}\nЗапиши голосовое сообщение 🎤")
 
 
 @router.message(Pronounce.waiting_for_voice, F.voice)
@@ -50,3 +51,8 @@ async def handle_voice(message: Message, state: FSMContext):
         await message.answer(f"Не совпало. Ты сказал: {recognized_text}, ожидалось: {expected_word}")
 
     await state.clear()
+
+
+@router.message(Pronounce.waiting_for_voice)
+async def handle_other(message: Message, state: FSMContext):
+    await message.answer("Отправь голосовое до 30 сек")
