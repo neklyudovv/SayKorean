@@ -16,7 +16,24 @@ class Pronounce(StatesGroup):
 
 @router.message(Command("start"))
 async def cmd_start(message: Message):
-    await message.answer("hi")
+    await message.answer("Привет, в этом боте ты можешь проверить свое произношение корейских слов.\n"
+                         "Чтобы начать - напиши /check {слово}")
+
+
+@router.message(Command("about"))
+async def cmd_start(message: Message):
+    await message.answer("Этот бот создан как учебный проект. Его цель — помочь в изучении корейского произношения"
+                         " через взаимодействие с Telegram.\n Используемые технологии:\n— Python + aiogram"
+                         "\n— Сравнение аудио с помощью моделей STT"
+                         "\n— Простая логика оценки сходства слов")
+
+
+@router.message(Command("help"))
+async def cmd_start(message: Message):
+    await message.answer("Для начала работы напиши команду <code>/check {слово на корейском}</code>\n\n"
+                         "Советы:\n— Говори чётко и не слишком быстро.\n— Лучше записывать в тихом месте."
+                         "\n— Отправляй только голосовые, а не аудио-файлы.\n\nОграничения:"
+                         "\n— Пока поддерживаются только отдельные слова.")
 
 
 @router.message(Command("check"))
