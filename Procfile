@@ -1,1 +1,2 @@
-python bot.py
+web: python bot.py
+release: echo "Release complete"
