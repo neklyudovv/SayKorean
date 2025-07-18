@@ -12,6 +12,12 @@ from aiogram.enums import ParseMode
 
 dp = Dispatcher()
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+)
+
+
 async def main() -> None:
     dp.include_router(router)
     load_dotenv()

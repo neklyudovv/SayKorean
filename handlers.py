@@ -5,10 +5,13 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
 from re import fullmatch
+import logging
 
 from speech_to_text import transcribe
 
 router = Router()
+logger = logging.getLogger(__name__)
+
 
 class Pronounce(StatesGroup):
     waiting_for_voice = State()
@@ -16,12 +19,14 @@ class Pronounce(StatesGroup):
 
 @router.message(Command("start"))
 async def cmd_start(message: Message):
+    logger.info(f"start used user: {message.from_user.id}")
     await message.answer("Привет, в этом боте ты можешь проверить свое произношение корейских слов.\n"
                          "Чтобы начать - напиши /check {слово}")
 
 
 @router.message(Command("about"))
-async def cmd_start(message: Message):
+async def cmd_about(message: Message):
+    logger.info(f"about used user: {message.from_user.id}")
     await message.answer("Этот бот создан как учебный проект. Его цель — помочь в изучении корейского произношения"
                          " через взаимодействие с Telegram.\n Используемые технологии:\n— Python + aiogram"
                          "\n— Сравнение аудио с помощью моделей STT"
@@ -29,7 +34,8 @@ async def cmd_start(message: Message):
 
 
 @router.message(Command("help"))
-async def cmd_start(message: Message):
+async def cmd_help(message: Message):
+    logger.info(f"help used user: {message.from_user.id}")
     await message.answer("Для начала работы напиши команду <code>/check {слово на корейском}</code>\n\n"
                          "Советы:\n— Говори чётко и не слишком быстро.\n— Лучше записывать в тихом месте."
                          "\n— Отправляй только голосовые, а не аудио-файлы.\n\nОграничения:"
@@ -45,7 +51,7 @@ async def cmd_check(message: Message, state: FSMContext):
         return
 
     word = args[1].strip()
-
+    print(message.from_user.id, word)
     if not fullmatch(r"[가-힣]+", word):
         await message.answer("Введенное слово не на корейском")
         return
